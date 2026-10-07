@@ -4,11 +4,12 @@ import type {
   FastifyRequest,
 } from "fastify";
 
+import { Prisma } from "../../generated/prisma/client.js";
 import { AppError } from "./app-error.js";
 
 /**
- * Converts expected application errors into stable API responses while
- * keeping unexpected failures out of the public response.
+ * Converts application failures into stable API responses without
+ * exposing internal implementation details to clients.
  */
 export function handleApplicationError(
   error: FastifyError,
@@ -19,6 +20,19 @@ export function handleApplicationError(
     return reply.status(error.statusCode).send({
       error: error.code,
       message: error.message,
+    });
+  }
+
+  // PostgreSQL remains the final authority for uniqueness.
+  // This also protects us when two requests pass an application-level
+  // duplicate check at roughly the same time.
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2002"
+  ) {
+    return reply.status(409).send({
+      error: "RESOURCE_ALREADY_EXISTS",
+      message: "A resource with these details already exists.",
     });
   }
 
