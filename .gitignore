@@ -1,0 +1,19 @@
+# Dependencies are installed locally from package.json
+node_modules/
+
+# Local environment variables can contain secrets
+.env
+.env.*
+
+# Keep an example environment file in Git
+!.env.example
+
+# Compiled TypeScript output
+dist/
+
+# Logs generated while running the application
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db

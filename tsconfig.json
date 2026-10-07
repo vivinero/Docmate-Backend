@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    // Use modern JavaScript features supported by current Node versions.
+    "target": "ES2022",
+
+    // Keep the backend on Node's modern module system.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    // Application code lives in src and compiled code goes to dist.
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Keep type checking strict so mistakes are caught before runtime.
+    "strict": true,
+
+    // Makes default imports from CommonJS packages easier to work with.
+    "esModuleInterop": true,
+
+    // Avoid type-checking third-party declaration files.
+    "skipLibCheck": true,
+
+    // Helps us trace production errors back to TypeScript source.
+    "sourceMap": true,
+
+    // Node globals and APIs such as process.env.
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
