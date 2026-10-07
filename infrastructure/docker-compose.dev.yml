@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: docmate-postgres-dev
+
+    environment:
+      POSTGRES_USER: docmate
+      POSTGRES_PASSWORD: docmate_dev_password
+      POSTGRES_DB: docmate
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - docmate_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docmate -d docmate"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  docmate_postgres_data:

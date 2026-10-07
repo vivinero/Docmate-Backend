@@ -1,8 +1,9 @@
 import { buildApp } from "./app.js";
+import { env } from "./config/env.js";
 
 const app = buildApp();
 
-const port = 3000;
+const port = env.PORT;
 
 try {
   await app.listen({
