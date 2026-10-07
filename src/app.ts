@@ -1,5 +1,9 @@
 import Fastify from "fastify";
 import { prisma } from "./lib/prisma.js";
+import { authRoutes } from "./modules/auth/auth.routes.js";
+import fastifyJwt from "@fastify/jwt";
+import { handleApplicationError } from "./common/errors/error-handler.js";
+import { env } from "./config/env.js";
 
 /**
  * Builds the Fastify application without starting the HTTP server.
@@ -10,6 +14,12 @@ import { prisma } from "./lib/prisma.js";
 export function buildApp() {
     const app = Fastify({
         logger: true,
+    });
+
+    app.setErrorHandler(handleApplicationError);
+
+    app.register(fastifyJwt, {
+        secret: env.JWT_ACCESS_SECRET,
     });
 
     app.get("/health", async (_request, reply) => {
@@ -28,6 +38,10 @@ export function buildApp() {
                 database: "unavailable",
             });
         }
+    });
+
+    app.register(authRoutes, {
+        prefix: "/api/v1/auth",
     });
 
     return app;

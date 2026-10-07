@@ -28,12 +28,16 @@ enum HospitalRole {
 }
 
 model User {
-  id              String     @id @default(uuid())
-  email           String     @unique
+  id              String           @id @default(uuid())
+  email           String           @unique
   passwordHash    String
   role            UserRole
-  status          UserStatus @default(ACTIVE)
+  status          UserStatus       @default(ACTIVE)
   emailVerifiedAt DateTime?
+  refreshSessions RefreshSession[]
+
+  emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens     PasswordResetToken[]
 
   patientProfile      PatientProfile?
   hospitalMemberships HospitalMembership[]
@@ -78,4 +82,50 @@ model HospitalMembership {
 
   @@unique([userId, hospitalId])
   @@index([hospitalId])
+}
+
+model RefreshSession {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
